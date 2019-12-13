@@ -1,1 +1,161 @@
-<h1>Free Lancing</h1>
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="proj.css">
+<style>
+
+
+</style>
+</head>
+<body>
+
+<!-- The Modal -->
+<div id="myModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <div id="modalheader" class="modal-header">
+      <span class="close">&times;</span>      
+    </div>
+    <div id="modalbody" class="modal-body">      
+    </div>
+  </div>
+
+</div>
+<div id="main" class="wrap">
+</div>
+
+<script type="text/javascript">
+function readTextFile(file)
+{
+    var rawFile = new XMLHttpRequest();
+    rawFile.open("GET", file, false);
+    rawFile.onreadystatechange = function ()
+    {
+        if(rawFile.readyState === 4)
+        {
+            if(rawFile.status === 200 || rawFile.status == 0)
+            {
+                var allText = rawFile.responseText;
+                var obj = JSON.parse(allText);
+                var data = obj.data;
+                buildpage(data);
+                console.log(obj);
+            }
+        }
+    }
+    rawFile.send(null);
+};
+_callModal = (oEvent, data) =>{
+    var modal = document.getElementById("myModal");
+    var element = document.getElementById("modalheader");
+    var element1 = document.getElementById("modalbody");
+
+    while (element.firstChild) {
+      element.removeChild(element.firstChild);
+    }
+
+    while (element1.firstChild) {
+      element1.removeChild(element1.firstChild);
+    }
+
+    modal.style.display = "block";
+
+    var span = document.createElement("span");
+    span.classList.add("close");
+    element.appendChild(span);
+
+
+    var index = this._getIndex(oEvent.path);
+    odata = data[index];
+    var para = document.createElement("h2");
+    var node = document.createTextNode(odata.name);        
+    para.appendChild(node);
+
+    
+    element.appendChild(para);
+
+    var para1 = document.createElement("h4");
+    var node1 = document.createTextNode(odata.descr);        
+    para1.appendChild(node1);
+    var a = document.createElement("a");
+    a.href = "#";
+    a.onclick = () => {
+        window.open(odata.link);
+    }
+    a.target = "_blank";
+    a.text = "Link";
+    
+    element1.appendChild(para1);
+    element1.append(a);
+},
+
+_getIndex = (path) =>{
+for( i = 0; i<path.length;i++){
+  if(path[i]["tagName"] == "DIV"){
+    var id = path[i].getAttribute("Id");
+    if(id.includes("data/")){
+      return id.split("/")[1];
+    }
+  }
+}
+},
+buildpage = (data) =>{
+    for(i=0;i<data.length;i++){
+        var div = document.createElement("div");
+        var randomNo = Math.floor(Math.random() * 8) + 1 ;
+        div.id = "data/"+i;
+        div.onclick = (oEvent) => { this._callModal(oEvent, data) };
+        div.classList.add("box");
+        div.classList.add("box"+ randomNo);
+        div.classList.add("shadow"+ randomNo);
+        div.style.backgroundImage = 'url("' + data[i].imageurl + '")';
+        div.style.backgroundSize= "contain";
+        div.style.backgroundRepeat= "repeat";
+        
+        // div.style.backgroundAttachment= "fixed"; 
+        var para = document.createElement("h3");
+        var node = document.createTextNode(data[i].name);   
+        if(data[i].color != ""){
+          para.style.color = data[i].color;
+        }
+        if(randomNo > 8){
+          para.style.color = "black";
+        }     
+        para.appendChild(node);
+        div.appendChild(para);
+
+        var element = document.getElementById("main");
+        element.appendChild(div);
+}
+
+}
+
+
+readTextFile("data.json");
+</script>
+    
+
+<script>
+// Get the modal
+var modal = document.getElementById("myModal");
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+  modal.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
+</script>
+
+</body>
+</html>
